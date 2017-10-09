@@ -1,0 +1,1 @@
+# Example project to demonstrate using DNS for cluster discovery in OpenShift
