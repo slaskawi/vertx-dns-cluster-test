@@ -1,4 +1,13 @@
 metadata:
-  name: vertx-cluster
+  labels:
+    app: vertx-dns-cluster-test-jgroups
+  name: vertx-dns-cluster-test-jgroups
 spec:
-  type: LoadBalancer
+  clusterIP: None
+  selector:
+    app: vertx-dns-cluster-test
+  ports:
+    - name: infinispan
+      port: 8888
+      targetPort: 8888
+      protocol: TCP

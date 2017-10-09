@@ -13,9 +13,14 @@ public class MainVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        vertx.eventBus().publish("cluster.event", uuid);
 
-        vertx.eventBus().consumer("cluster.event", LOG::warn);
+        vertx.eventBus().consumer("cluster.event", msg -> {
+            LOG.warn(msg.body());
+        });
+
+        vertx.setPeriodic(5000, timer -> {
+            vertx.eventBus().publish("cluster.event", uuid);
+        });
     }
 
 }

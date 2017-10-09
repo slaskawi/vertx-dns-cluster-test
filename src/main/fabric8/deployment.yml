@@ -1,25 +1,62 @@
+metadata:
+  name: vertx-dns-cluster-test
+  labels:
+    app: vertx-dns-cluster-test
 spec:
-  replicas: 1
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 3600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - vertx
+        from:
+          kind: ImageStreamTag
+          namespace: myproject
+          name: 'vertx-dns-cluster-test:latest'
+  replicas: 3
+  revisionHistoryLimit: 2
+  test: false
+  selector:
+    app: vertx-dns-cluster-test
+    group: com.redhat.labs
+    provider: fabric8
   template:
     spec:
-      volumes:
-        - name: config
-          gitRepo:
-            repository: 'https://github.com/jstrachan/sample-springboot-config.git'
-            revision: 667ee4db6bc842b127825351e5c9bae5a4fb2147
-            directory: .
       containers:
-        - volumeMounts:
-            - name: config
-              mountPath: /app/config
+        - name: vertx
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: infinispan
+              containerPort: 8888
+              protocol: TCP
+            - name: jolokia
+              containerPort: 8778
+              protocol: TCP
+            - name: eventbus
+              containerPort: 5600
+              protocol: TCP
           env:
-            - name: KUBERNETES_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
-            - name: OPENSHIFT_DNS_PING_SERVICE_NAME
-              value: vertx-cluster
-            - name: OPENSHIFT_DNS_PING_SERVICE_PORT
-              value: 8888
-      serviceAccount: ribbon
+            - name: JAVA_ARGS
+              value: "-Djgroups.dns.query=vertx-dns-cluster-test-jgroups -Djgroups.dns.address=${KUBERNETES_SERVICE_HOST} -Djava.net.preferIPv4Stack=true -cluster"
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: false
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
