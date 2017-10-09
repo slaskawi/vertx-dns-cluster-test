@@ -19,13 +19,7 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.namespace
             - name: OPENSHIFT_DNS_PING_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
+              value: vertx-cluster
             - name: OPENSHIFT_DNS_PING_SERVICE_PORT
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
+              value: 8888
       serviceAccount: ribbon

@@ -1,0 +1,4 @@
+metadata:
+  name: vertx-cluster
+spec:
+  type: LoadBalancer
