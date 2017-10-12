@@ -50,7 +50,7 @@ spec:
               protocol: TCP
           env:
             - name: JAVA_ARGS
-              value: "-Djgroups.dns.query=vertx-dns-cluster-test-jgroups -Djgroups.dns.address=${KUBERNETES_SERVICE_HOST} -Djava.net.preferIPv4Stack=true -cluster"
+              value: "-Djgroups.dns.query=vertx-dns-cluster-test-jgroups.myproject.svc.cluster.local -Djgroups.dns.address=172.30.0.1 -Djava.net.preferIPv4Stack=true -cluster"
           resources: {}
           terminationMessagePath: /dev/termination-log
           imagePullPolicy: IfNotPresent
